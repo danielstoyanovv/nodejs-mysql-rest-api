@@ -32,39 +32,7 @@ describe("Test users api",  function() {
             expect(response.status).toBe(201);
             json.then(async result => {
                 expect(result.message).toEqual("New user registered successfully");
-                expect(result.data._id).not.toBeNull();
-            })
-        }
-    });
-    test("Get user", async function() {
-        const userData = {
-            email: "test_user_" + Math.random().toString(16).substr(2, 8) + "@abv.bg",
-            password: "123456",
-            role: "admin"
-        }
-        const response = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(userData),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        const json = response.json()
-        if (response.ok) {
-            expect(response.status).toBe(201);
-            json.then(async result => {
-                expect(result.message).toEqual("New user registered successfully");
-                expect(result.data._id).not.toBeNull();
-                const getUserResponse = await fetch(API_URL + "/" + result.data._id)
-                const userJson = await getUserResponse.json()
-                if (userJson.ok) {
-                    userJson.then(async user => {
-                        expect(user.role).toEqual("admin");
-                        expect(user).toHaveProperty("_id");
-                        expect(user).toHaveProperty("password");
-                        expect(user).toHaveProperty("email");    
-                    })
-                }    
+                expect(result.data.id).not.toBeNull();
             })
         }
     });
@@ -83,12 +51,15 @@ describe("Test users api",  function() {
             email: "update_not_admin_" + Math.random().toString(16).substr(2, 8) + "@abv.bg",
             password: "123456",
             role: "user"
-        }
+        }        
         const responseUserWithoutAdminRole = await fetch(API_URL, {
             method: "POST",
             body: JSON.stringify(userWithoutAdminRole),
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, PATCH, DELETE",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization"
             }
         })
         if (responseUserWithoutAdminRole.ok) {
@@ -96,7 +67,8 @@ describe("Test users api",  function() {
             expect(responseUserWithoutAdminRole.status).toBe(201);
             jsonUserWithoutAdminRole.then(async result => {                
                 expect(result.message).toEqual("New user registered successfully");
-                expect(result.data._id).not.toBeNull();
+                expect(result.data.id).not.toBeNull();
+                
                 const responseLogin = await fetch(API_LOGIN, {
                     method: "POST",
                     body: JSON.stringify(userWithoutAdminRole),
@@ -108,7 +80,7 @@ describe("Test users api",  function() {
                 expect(responseLogin.status).toBe(200);
                 jsonLogin.then(async login => {
                     expect(login.data.token).not.toBeNull();
-                    const responseUpdate = await fetch(API_URL + '/' + result.data._id, {
+                    const responseUpdate = await fetch(API_URL + '/' + Number(result.data.id), {
                         method: 'PATCH',
                         body: JSON.stringify(userWithoutAdminRole),
                         headers: {
@@ -138,7 +110,7 @@ describe("Test users api",  function() {
         const jsonUserWithAdminRole = responseUserWithAdminRole.json()
         jsonUserWithAdminRole.then(async result => {
             expect(result.message).toEqual("New user registered successfully");
-            expect(result.data._id).not.toBeNull();
+            expect(result.data.id).not.toBeNull();
             const responseLogin = await fetch(API_LOGIN, {
                 method: "POST",
                 body: JSON.stringify(userWithAdminRole),
@@ -150,7 +122,7 @@ describe("Test users api",  function() {
             const jsonLogin = responseLogin.json()
             jsonLogin.then(async login => {
                 expect(login.data.token).not.toBeNull();
-                const responseUpdate = await fetch(API_URL + '/' + result.data._id, {
+                const responseUpdate = await fetch(API_URL + '/' + Number(result.data.id), {
                     method: 'PATCH',
                     body: JSON.stringify(userWithAdminRole),
                     headers: {
@@ -162,6 +134,7 @@ describe("Test users api",  function() {
                 expect(responseUpdate.status).toBe(200);
             })
         })
+        
     });
     test("Delete user", async function() {
         const userWithAdminRole = {
@@ -180,7 +153,7 @@ describe("Test users api",  function() {
         const jsonUserWithAdminRole = responseUserWithAdminRole.json()
         jsonUserWithAdminRole.then(async result => {
             expect(result.message).toEqual("New user registered successfully");
-            expect(result.data._id).not.toBeNull();
+            expect(result.data.id).not.toBeNull();
             const responseLogin = await fetch(API_LOGIN, {
                 method: "POST",
                 body: JSON.stringify(userWithAdminRole),
@@ -192,7 +165,7 @@ describe("Test users api",  function() {
             const jsonLogin = responseLogin.json()
             jsonLogin.then(async login => {
                 expect(login.data.token).not.toBeNull();
-                const responseDelete = await fetch(API_URL + '/' + result.data._id, {
+                const responseDelete = await fetch(API_URL + '/' + Number(result.data.id), {
                     method: 'DELETE',
                     headers: {
                         "Content-Type": "application/json",
@@ -203,5 +176,37 @@ describe("Test users api",  function() {
                 expect(responseDelete.status).toBe(200);
             })
         });
+    });
+    test("Get user", async function() {
+        const userData = {
+            email: "test_user_" + Math.random().toString(16).substr(2, 8) + "@abv.bg",
+            password: "123456",
+            role: "admin"
+        }
+        const response = await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify(userData),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const json = response.json()
+        if (response.ok) {
+            expect(response.status).toBe(201);
+            json.then(async result => {
+                expect(result.message).toEqual("New user registered successfully");
+                expect(result.data.id).not.toBeNull();
+                const getUserResponse = await fetch(API_URL + "/" + result.data.id)
+                const userJson = await getUserResponse.json()
+                if (userJson.ok) {
+                    userJson.then(async user => {
+                        expect(user.role).toEqual("admin");
+                        expect(user).toHaveProperty("id");
+                        expect(user).toHaveProperty("password");
+                        expect(user).toHaveProperty("email");    
+                    })
+                }    
+            })
+        }
     });
 });

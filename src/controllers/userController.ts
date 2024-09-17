@@ -53,34 +53,6 @@ export const createUser = async ( req: Request,  res: Response) => {
     }
 }
 
-export const getUser = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params
-        console.log(typeof id)
-        const results = await myDataSource.getRepository(User).findOneBy({id: Number(id)})
-        if (results) {
-            res.status(200).json({
-                status: STATUS_SUCCESS, 
-                data: results,
-                message: ""
-            })
-        }
-        return res.status(404).json({
-            status: STATUS_ERROR, 
-            data: [],
-            message: "No such user"
-        })
-        
-    } catch (error) {
-        return res.status(500).json({
-            status: STATUS_ERROR, 
-            data: [],
-            message: INTERNAL_SERVER_ERROR
-        })
-
-    }
-}
-
 export const deleteUser = async (req: Request, res: Response) => {
     try {
         const results = await myDataSource.getRepository(User).delete(req.params.id)
@@ -118,6 +90,28 @@ export const updateUser = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error)
         res.status(500).json({
+            status: STATUS_ERROR, 
+            data: [],
+            message: INTERNAL_SERVER_ERROR
+        })
+
+    }
+}
+
+export const getUser = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params
+        console.log(typeof id)
+        const results = await myDataSource.getRepository(User).findOneBy({id: Number(id)})
+        if (results) {
+            res.status(200).json({
+                status: STATUS_SUCCESS, 
+                data: results,
+                message: ""
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
             status: STATUS_ERROR, 
             data: [],
             message: INTERNAL_SERVER_ERROR
