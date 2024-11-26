@@ -3,10 +3,10 @@
 import { User } from '../models/userModel'
 import { Request, Response } from "express"
 import {config} from "dotenv"
-import { STATUS_SUCCESS, STATUS_ERROR, INTERNAL_SERVER_ERROR } from "../config/data"
+import { STATUS_SUCCESS, STATUS_ERROR, INTERNAL_SERVER_ERROR } from "../constants/data"
 config()
 import { myDataSource } from "../config/app-data-source"
-import { TokenService } from "../config/TokenService";
+import { TokenService } from "../services/TokenService";
 export const loginUser = async ( req: Request,  res: Response) => {
     const { email, password, role } = req.body;
     const INVALID_EMAIL_PASSWORD = "Invalid email or password";

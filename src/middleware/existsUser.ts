@@ -3,7 +3,7 @@
 import {Request, Response, NextFunction } from "express";
 import { User } from "../models/userModel";
 import { myDataSource } from "../config/app-data-source"
-import { STATUS_ERROR } from "../config/data"
+import { STATUS_ERROR } from "../constants/data"
 
 export async function existsUser(req: Request, res: Response, next: NextFunction) {
     const { email } = req.body;

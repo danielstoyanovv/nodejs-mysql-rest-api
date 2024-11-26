@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction } from "express";
 import {config} from "dotenv"
 config()
-import { STATUS_ERROR } from "../config/data"
+import { STATUS_ERROR } from "../constants/data"
 import jwt from 'jsonwebtoken'
 
 export const VerifyToken = (req: Request, res: Response, next: NextFunction) => {
