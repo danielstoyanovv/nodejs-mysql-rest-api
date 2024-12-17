@@ -1,10 +1,12 @@
+"use strict";
+
 import {Request, Response, NextFunction } from "express";
 import {config} from "dotenv"
 config()
 import { STATUS_ERROR } from "../constants/data"
 import jwt from 'jsonwebtoken'
 
-export const VerifyToken = (req: Request, res: Response, next: NextFunction) => {
+export const VerifyTokenMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const token = req.body.token || req.query.token || req.headers['x-access-token'] || false
     if (!token) {
         return res.status(403).json({

@@ -1,9 +1,11 @@
+"use strict";
+
 import {Request, Response, NextFunction } from "express";
 import { User } from "../models/userModel";
 import { myDataSource } from "../config/app-data-source"
 import { STATUS_ERROR } from "../constants/data"
 
-export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyEmailMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params
     const { email } = req.body;
     const user = await myDataSource.getRepository(User).findOneBy({"id": Number(id)})

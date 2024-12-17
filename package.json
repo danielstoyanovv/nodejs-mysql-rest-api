@@ -6,8 +6,8 @@
   "main": "./src/server.ts",
   "scripts": {
     "test": "jest",
-    "start": "node ./src/server.ts",
-    "dev": "nodemon ./src/server.ts"
+    "start": "node ./build/server.js",
+    "dev": "ts-node --files src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
     "mysql": "^2.18.1",
+    "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20"
   },

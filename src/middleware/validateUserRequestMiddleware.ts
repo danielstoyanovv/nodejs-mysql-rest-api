@@ -1,8 +1,10 @@
+"use strict";
+
 import {Request, Response, NextFunction } from "express";
 import emailValidator from "email-validator";
 import { STATUS_ERROR } from "../constants/data"
 
-export const validateUserRequest = async (req: Request, res: Response, next: NextFunction) => {
+export const validateUserRequestMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const ROLES = ['admin', 'user']
     const { email, password, role } = req.body;
     const validationErrors = [];
