@@ -3,7 +3,7 @@
 import {Request, Response, NextFunction } from "express";
 import {STATUS_SUCCESS} from "../constants/data"
 import {RedisServerService} from "../services/RedisServerService";
-export const addUserToCacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const getUserFromCacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params
     const cacheKey = "user_" + id
     const redisClient = new RedisServerService().getRedisClient
