@@ -1,6 +1,6 @@
 "use strict";
 
-import { User } from '../models/userModel'
+import { User } from '../entity/User'
 import { Request, Response } from "express"
 import {config} from "dotenv"
 import {
@@ -8,13 +8,13 @@ import {
     STATUS_ERROR,
     INTERNAL_SERVER_ERROR } from "../constants/data"
 config()
-import { myDataSource } from "../config/app-data-source"
+import { AppDataSource } from "../config/ormconfig"
 import { TokenService } from "../services/TokenService";
 export const loginUser = async ( req: Request,  res: Response) => {
     const { email, password, role } = req.body;
     const INVALID_EMAIL_PASSWORD = "Invalid email or password";
     try {
-        const user = await myDataSource.getRepository(User).findOneBy({"email": email})
+        const user = await AppDataSource.getRepository(User).findOneBy({"email": email})
         if (!user) {
             return res.status(401).json({ 
                 status: STATUS_ERROR, 

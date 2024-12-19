@@ -1,20 +1,20 @@
 "use strict";
 
-import { User } from '../models/userModel'
+import { User } from '../entity/User'
 import { Request, Response } from "express"
 const bcrypt = require("bcrypt")
 import {
     STATUS_SUCCESS,
     STATUS_ERROR,
     INTERNAL_SERVER_ERROR } from "../constants/data"
-import { myDataSource } from "../config/app-data-source"
+import { AppDataSource } from "../config/ormconfig"
 import {RedisServerService} from "../services/RedisServerService";
 
 const redisClient = new RedisServerService().getRedisClient
 export const getUsers = async ( req: Request,  res: Response) => {
     try { 
         const limit = req.query.limit ?? null
-        const [users, total] = await myDataSource.getRepository(User).findAndCount({
+        const [users, total] = await AppDataSource.getRepository(User).findAndCount({
             order: {
                 id: "DESC",
             }  
@@ -43,8 +43,8 @@ export const createUser = async ( req: Request,  res: Response) => {
     try {
         const { email, role } = req.body;
         const password = await bcrypt.hash(req.body.password, 10);
-        const user = await myDataSource.getRepository(User).create({email, role, password})
-        const results = await myDataSource.getRepository(User).save(user)
+        const user = await AppDataSource.getRepository(User).create({email, role, password})
+        const results = await AppDataSource.getRepository(User).save(user)
         await redisClient.del("users")
         res.status(201).json({ 
             status: STATUS_SUCCESS, 
@@ -52,6 +52,7 @@ export const createUser = async ( req: Request,  res: Response) => {
             message: "New user registered successfully" 
         });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ 
             status: STATUS_ERROR, 
             data: [],
@@ -63,7 +64,7 @@ export const createUser = async ( req: Request,  res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
     try {
         const id = req.params.id
-        const results = await myDataSource.getRepository(User).delete(id)
+        const results = await AppDataSource.getRepository(User).delete(id)
         await redisClient.del("users")
         const cacheKey = "user_" + id
         await redisClient.del(cacheKey)
@@ -86,14 +87,15 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
     try {
         const id = req.params.id
-        const user = await myDataSource.getRepository(User).findOneBy({
+        const user = await AppDataSource.getRepository(User).findOneBy({
             id: Number(id),
         })
         if (user) {
             const { email, role } = req.body;
             const password = await bcrypt.hash(req.body.password, 10);
-            myDataSource.getRepository(User).merge(user, {email, role, password})
-            const results = await myDataSource.getRepository(User).save(user)
+
+            AppDataSource.getRepository(User).merge(user, {email, role, password})
+            const results = await AppDataSource.getRepository(User).save(user)
             await redisClient.del("users")
             const cacheKey = "user_" + id
             await redisClient.del(cacheKey)
@@ -117,7 +119,7 @@ export const updateUser = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
-        const results = await myDataSource.getRepository(User).findOneBy({id: Number(id)})
+        const results = await AppDataSource.getRepository(User).findOneBy({id: Number(id)})
         if (results) {
             const cacheKey = "user_" + id
             await redisClient.setEx(cacheKey, 600, JSON.stringify(results)); // Cache data for 10 minutes

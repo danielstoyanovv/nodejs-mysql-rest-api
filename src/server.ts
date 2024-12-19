@@ -15,10 +15,17 @@ import {VerifyTokenMiddleware} from "./middleware/verifyTokenMiddleware";
 import cors from "cors";
 import { existsUserMiddleware } from "./middleware/existsUserMiddleware";
 import { verifyEmailMiddleware } from "./middleware/verifyEmailMiddleware";
-import { myDataSource } from "./config/app-data-source"
 import {loginUser} from "./controllers/authenticationController";
 import {getUsersFromCacheMiddleware} from "./middleware/getUsersFromCacheMiddleware";
 import {getUserFromCacheMiddleware} from "./middleware/getUserFromCacheMiddleware";
+import { AppDataSource } from "./config/ormconfig";
+
+
+AppDataSource.initialize()
+    .then(() => {
+        console.log("Database connection established.");
+    })
+    .catch((error) => console.error("Database connection error:", error));
 
 const app = express()
 
@@ -50,12 +57,3 @@ app.get('/api/users/:id', getUserFromCacheMiddleware, getUser)
 app.listen(port, () => {
     console.log('listening on port', port)
 })
-
-myDataSource
-    .initialize()
-    .then(() => {
-        console.log("Mysql connected")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization:", err)
-    })
