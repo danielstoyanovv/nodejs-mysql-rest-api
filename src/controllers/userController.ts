@@ -12,14 +12,19 @@ import {RedisServerService} from "../services/RedisServerService";
 
 const redisClient = new RedisServerService().getRedisClient
 export const getUsers = async ( req: Request,  res: Response) => {
-    try { 
-        const limit = req.query.limit ?? null
+    try {
+        const limit = Number(req.query.limit || null)
         const [users, total] = await AppDataSource.getRepository(User).findAndCount({
             order: {
                 id: "DESC",
-            }  
+            },
+            take: limit
         })
-        await redisClient.setEx("users", 600, JSON.stringify(users)); // Cache data for 10 minutes
+        if (req.query.limit) {
+            await redisClient.del("users")
+        } else {
+            await redisClient.setEx("users", 600, JSON.stringify(users)); // Cache data for 10 minutes
+        }
         res.status(200).json({
             status: STATUS_SUCCESS, 
             data: {
