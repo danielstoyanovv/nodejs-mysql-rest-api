@@ -91,9 +91,9 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id
+        const id = Number(req.params.id)
         const user = await AppDataSource.getRepository(User).findOneBy({
-            id: Number(id),
+            id: id,
         })
         if (user) {
             const { email, role } = req.body;
@@ -123,8 +123,8 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params
-        const results = await AppDataSource.getRepository(User).findOneBy({id: Number(id)})
+        const id = Number(req.params.id)
+        const results = await AppDataSource.getRepository(User).findOneBy({id: id})
         if (results) {
             const cacheKey = "user_" + id
             await redisClient.setEx(cacheKey, 600, JSON.stringify(results)); // Cache data for 10 minutes
