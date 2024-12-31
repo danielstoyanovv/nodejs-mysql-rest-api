@@ -20,11 +20,7 @@ export const getUsers = async ( req: Request,  res: Response) => {
             },
             take: limit
         })
-        if (req.query.limit) {
-            await redisClient.del("users")
-        } else {
-            await redisClient.setEx("users", 600, JSON.stringify(users)); // Cache data for 10 minutes
-        }
+        req.query.limit != undefined ? await redisClient.del("users") : await redisClient.setEx("users", 600, JSON.stringify(users));
         res.status(200).json({
             status: STATUS_SUCCESS, 
             data: {
