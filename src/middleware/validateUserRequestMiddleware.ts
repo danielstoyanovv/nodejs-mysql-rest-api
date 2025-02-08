@@ -2,7 +2,10 @@
 
 import {Request, Response, NextFunction } from "express";
 import emailValidator from "email-validator";
-import { STATUS_ERROR } from "../constants/data"
+import {
+    MESSEGE_ERROR,
+    STATUS_BAD_REQUEST
+} from "../constants/data"
 
 export const validateUserRequestMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const ROLES = ['admin', 'user']
@@ -18,8 +21,8 @@ export const validateUserRequestMiddleware = async (req: Request, res: Response,
         validationErrors.push("role is not valid, valid roles: 'admin', 'user'")
     }
     if (validationErrors.length > 0) {
-        return res.status(400).json({
-            status: STATUS_ERROR, 
+        return res.status(STATUS_BAD_REQUEST).json({
+            status: MESSEGE_ERROR,
             data: [],
             message: validationErrors
             

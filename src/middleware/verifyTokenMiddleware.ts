@@ -3,14 +3,19 @@
 import {Request, Response, NextFunction } from "express";
 import {config} from "dotenv"
 config()
-import { STATUS_ERROR } from "../constants/data"
+import {
+    MESSEGE_ERROR,
+    STATUS_UNAUTHORIZED,
+    STATUS_FORBIDDEN
+
+} from "../constants/data"
 import jwt from 'jsonwebtoken'
 
 export const VerifyTokenMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const token = req.body.token || req.query.token || req.headers['x-access-token'] || false
     if (!token) {
-        return res.status(403).json({
-            status: STATUS_ERROR, 
+        return res.status(STATUS_FORBIDDEN).json({
+            status: MESSEGE_ERROR,
             data: [],
             message: "No token provided."
         });
@@ -23,8 +28,8 @@ export const VerifyTokenMiddleware = (req: Request, res: Response, next: NextFun
             const exp = decoded.exp;
             const expired = (Date.now() >= exp * 1000)
             if (expired) {
-                return res.status(401).json({
-                    status: STATUS_ERROR, 
+                return res.status(STATUS_UNAUTHORIZED).json({
+                    status: MESSEGE_ERROR,
                     data: [],
                     message: "Unauthorized access."
                 });
@@ -32,8 +37,8 @@ export const VerifyTokenMiddleware = (req: Request, res: Response, next: NextFun
             const tokenData = jwt.verify(token, process.env.JWT_SECRET!, {})
             const isAdmin = Object.values(tokenData).includes("admin");
             if (!isAdmin) {
-                return res.status(401).json({
-                    status: STATUS_ERROR, 
+                return res.status(STATUS_UNAUTHORIZED).json({
+                    status: MESSEGE_ERROR,
                     data: [],
                     message: "Unauthorized access - admins access required." 
                 });

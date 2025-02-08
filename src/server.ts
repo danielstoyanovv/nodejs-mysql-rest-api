@@ -3,7 +3,6 @@
 import express from "express"
 import {config} from "dotenv"
 config()
-import { Request, Response } from "express"
 import {validateUserRequestMiddleware} from "./middleware/validateUserRequestMiddleware";
 import {
     createUser,
@@ -19,8 +18,6 @@ import {loginUser} from "./controllers/authenticationController";
 import {getUsersFromCacheMiddleware} from "./middleware/getUsersFromCacheMiddleware";
 import {getUserFromCacheMiddleware} from "./middleware/getUserFromCacheMiddleware";
 import { AppDataSource } from "./config/ormconfig";
-
-
 AppDataSource.initialize()
     .then(() => {
         console.log("Database connection established.");
@@ -30,29 +27,23 @@ AppDataSource.initialize()
 const app = express()
 
 const port = process.env.SERVER_PORT || 4000
-
+const API_PREFIX = process.env.API_PREFIX || "api"
+const API_VERSION = process.env.API_VERSION || "v1"
 app.use(cors())
 
 app.use(express.json())
-app.get('/', (req: Request, res: Response) => {
-    res.json({mssg: 'Welcome to the app'})
-})
-app.post("/admin", (req: Request, res: Response) => {
-    const { username } = req.body;
-    res.send(`This is an Admin Route. Welcome ${username}`);
-});
 
-app.post("/api/users", validateUserRequestMiddleware, existsUserMiddleware, createUser);
+app.post("/" + API_PREFIX + "/" + API_VERSION +  "/users", validateUserRequestMiddleware, existsUserMiddleware, createUser);
 
-app.patch('/api/users/:id', validateUserRequestMiddleware, verifyEmailMiddleware, VerifyTokenMiddleware, updateUser)
+app.patch("/" + API_PREFIX + "/" + API_VERSION +  "/users/:id", validateUserRequestMiddleware, verifyEmailMiddleware, VerifyTokenMiddleware, updateUser)
 
-app.delete('/api/users/:id', VerifyTokenMiddleware, deleteUser)
+app.delete("/" + API_PREFIX + "/" + API_VERSION +  "/users/:id", VerifyTokenMiddleware, deleteUser)
 
-app.post('/api/login', validateUserRequestMiddleware, loginUser)
+app.post("/" + API_PREFIX + "/" + API_VERSION +  "/login", validateUserRequestMiddleware, loginUser)
 
-app.get("/api/users", getUsersFromCacheMiddleware, getUsers);
+app.get("/" + API_PREFIX + "/" + API_VERSION +  "/users", getUsersFromCacheMiddleware, getUsers);
 
-app.get('/api/users/:id', getUserFromCacheMiddleware, getUser)
+app.get("/" + API_PREFIX + "/" + API_VERSION +  "/users/:id", getUserFromCacheMiddleware, getUser)
 
 app.listen(port, () => {
     console.log('listening on port', port)

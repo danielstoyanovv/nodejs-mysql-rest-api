@@ -1,6 +1,6 @@
 describe("Test users api",  function() {
-    const API_URL = "http://localhost:4000/api/users";
-    const API_LOGIN = "http://localhost:4000/api/login";
+    const API_URL = "http://localhost:4000/api/v1/users";
+    const API_LOGIN = "http://localhost:4000/api/v1/login";
     test("Create user", async function() {
         const notValidUser = {
             email: "2",
@@ -46,137 +46,6 @@ describe("Test users api",  function() {
             })
         }
     });
-    test("Update user", async function() {
-        const userWithoutAdminRole = {
-            email: "update_not_admin_" + Math.random().toString(16).substr(2, 8) + "@abv.bg",
-            password: "123456",
-            role: "user"
-        }        
-        const responseUserWithoutAdminRole = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(userWithoutAdminRole),
-            headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, PATCH, DELETE",
-                "Access-Control-Allow-Headers": "Content-Type, Authorization"
-            }
-        })
-        if (responseUserWithoutAdminRole.ok) {
-            const jsonUserWithoutAdminRole = responseUserWithoutAdminRole.json()
-            expect(responseUserWithoutAdminRole.status).toBe(201);
-            jsonUserWithoutAdminRole.then(async result => {                
-                expect(result.message).toEqual("New user registered successfully");
-                expect(result.data.id).not.toBeNull();
-                
-                const responseLogin = await fetch(API_LOGIN, {
-                    method: "POST",
-                    body: JSON.stringify(userWithoutAdminRole),
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                })
-                const jsonLogin = responseLogin.json()
-                expect(responseLogin.status).toBe(200);
-                jsonLogin.then(async login => {
-                    expect(login.data.token).not.toBeNull();
-                    const responseUpdate = await fetch(API_URL + '/' + Number(result.data.id), {
-                        method: 'PATCH',
-                        body: JSON.stringify(userWithoutAdminRole),
-                        headers: {
-                            "Content-Type": "application/json",
-                            "x-access-token": login.data.token
-                        }
-
-                    })
-                    expect(responseUpdate.status).toBe(401);
-                })
-            })
-            
-        }
-        const userWithAdminRole = {
-            email: "update_admin_" + Math.random().toString(16).substr(2, 8) + "@abv.bg",
-            password: "123456",
-            role: "admin"
-        }
-        const responseUserWithAdminRole = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(userWithAdminRole),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        expect(responseUserWithAdminRole.status).toBe(201);
-        const jsonUserWithAdminRole = responseUserWithAdminRole.json()
-        jsonUserWithAdminRole.then(async result => {
-            expect(result.message).toEqual("New user registered successfully");
-            expect(result.data.id).not.toBeNull();
-            const responseLogin = await fetch(API_LOGIN, {
-                method: "POST",
-                body: JSON.stringify(userWithAdminRole),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            expect(responseLogin.status).toBe(200);
-            const jsonLogin = responseLogin.json()
-            jsonLogin.then(async login => {
-                expect(login.data.token).not.toBeNull();
-                const responseUpdate = await fetch(API_URL + '/' + Number(result.data.id), {
-                    method: 'PATCH',
-                    body: JSON.stringify(userWithAdminRole),
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-access-token": login.data.token
-                    }
-
-                })
-                expect(responseUpdate.status).toBe(200);
-            })
-        })
-        
-    });
-    test("Delete user", async function() {
-        const userWithAdminRole = {
-            email: "test_delete_user@abv.bg",
-            password: "123456",
-            role: "admin"
-        }
-        const responseUserWithAdminRole = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(userWithAdminRole),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        expect(responseUserWithAdminRole.status).toBe(201);
-        const jsonUserWithAdminRole = responseUserWithAdminRole.json()
-        jsonUserWithAdminRole.then(async result => {
-            expect(result.message).toEqual("New user registered successfully");
-            expect(result.data.id).not.toBeNull();
-            const responseLogin = await fetch(API_LOGIN, {
-                method: "POST",
-                body: JSON.stringify(userWithAdminRole),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            expect(responseLogin.status).toBe(200);
-            const jsonLogin = responseLogin.json()
-            jsonLogin.then(async login => {
-                expect(login.data.token).not.toBeNull();
-                const responseDelete = await fetch(API_URL + '/' + Number(result.data.id), {
-                    method: 'DELETE',
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-access-token": login.data.token
-                    }
-
-                })
-                expect(responseDelete.status).toBe(200);
-            })
-        });
-    });
     test("Get user", async function() {
         const userData = {
             email: "test_user_" + Math.random().toString(16).substr(2, 8) + "@abv.bg",
@@ -209,4 +78,117 @@ describe("Test users api",  function() {
             })
         }
     });
+    test("Update user", async function() {
+        const userWithAdminRole = {
+            email: "update_admin_" + Math.random().toString(16).substr(2, 8) + "@abv.bg",
+            password: "123456",
+            role: "admin"
+        }
+        const responseUserWithAdminRole = await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify(userWithAdminRole),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        expect(responseUserWithAdminRole.status).toBe(201);
+        const jsonUserWithAdminRole = responseUserWithAdminRole.json()
+        jsonUserWithAdminRole.then(async result => {
+            expect(result.message).toEqual("New user registered successfully");
+            expect(result.status).toEqual("success");
+            const responseLogin = await fetch(API_LOGIN, {
+                method: "POST",
+                body: JSON.stringify(userWithAdminRole),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            expect(responseLogin.status).toBe(200);
+            const jsonLogin = responseLogin.json()
+            jsonLogin.then(async login => {
+                expect(login.data.token).not.toBeNull();
+                const userWithoutAdminRole = {
+                    email: "update_not_admin_" + Math.random().toString(16).substr(2, 8) + "@abv.bg",
+                    password: "123456",
+                    role: "user"
+                }
+                const responseUserWithoutAdminRole = await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify(userWithoutAdminRole),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                if (responseUserWithoutAdminRole.ok) {
+                    const jsonUserWithoutAdminRole = responseUserWithoutAdminRole.json()
+                    expect(responseUserWithoutAdminRole.status).toBe(201);
+                    jsonUserWithoutAdminRole.then(async result => {
+                        expect(result.message).toEqual("New user registered successfully");
+                        expect(result.status).toEqual("success");
+                        const responseLogin = await fetch(API_LOGIN, {
+                            method: "POST",
+                            body: JSON.stringify(userWithoutAdminRole),
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        })
+                        const jsonLogin = responseLogin.json()
+                        expect(responseLogin.status).toBe(200);
+                        jsonLogin.then(async login => {
+                            expect(login.data.token).not.toBeNull();
+                            const responseUpdate = await fetch(API_URL + '/' + login.data.logged_user_id, {
+                                method: 'PATCH',
+                                body: JSON.stringify(userWithoutAdminRole),
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "x-access-token": login.data.token
+                                }
+
+                            })
+                            expect(responseUpdate.status).toBe(401);
+                        })
+                    })
+
+                }
+                const responseUpdate = await fetch(API_URL + '/' + login.data.logged_user_id, {
+                    method: 'PATCH',
+                    body: JSON.stringify(userWithAdminRole),
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-access-token": login.data.token
+                    }
+                })
+                expect(responseUpdate.status).toBe(200);
+            })
+        })
+    });
+    test("Delete user", async function() {
+        const userWithAdminRole = {
+            email: "test_admin_user@abv.bg",
+            password: "123456",
+            role: "admin"
+        }
+        const responseLogin = await fetch(API_LOGIN, {
+            method: "POST",
+            body: JSON.stringify(userWithAdminRole),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        if (responseLogin.ok) {
+            expect(responseLogin.status).toBe(200);
+            const jsonLogin = responseLogin.json()
+            jsonLogin.then(async login => {
+                expect(login.data.token).not.toBeNull();
+                const responseDelete = await fetch(API_URL + '/' + login.data.logged_user_id, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-access-token": login.data.token
+                    }
+                })
+                expect(responseDelete.status).toBe(204);
+            })
+        }
+    })
 });
