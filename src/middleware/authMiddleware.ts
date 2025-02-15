@@ -11,10 +11,10 @@ import {
 } from "../constants/data"
 import jwt from 'jsonwebtoken'
 
-export const VerifyTokenMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const token = req.body.token || req.query.token || req.headers['x-access-token'] || false
     if (!token) {
-        return res.status(STATUS_FORBIDDEN).json({
+        return res.status(STATUS_UNAUTHORIZED).json({
             status: MESSEGE_ERROR,
             data: [],
             message: "No token provided."
@@ -28,19 +28,19 @@ export const VerifyTokenMiddleware = (req: Request, res: Response, next: NextFun
             const exp = decoded.exp;
             const expired = (Date.now() >= exp * 1000)
             if (expired) {
-                return res.status(STATUS_UNAUTHORIZED).json({
+                return res.status(STATUS_FORBIDDEN).json({
                     status: MESSEGE_ERROR,
                     data: [],
-                    message: "Unauthorized access."
+                    message: "Invalid or expired token."
                 });
             }
             const tokenData = jwt.verify(token, process.env.JWT_SECRET!, {})
             const isAdmin = Object.values(tokenData).includes("admin");
             if (!isAdmin) {
-                return res.status(STATUS_UNAUTHORIZED).json({
+                return res.status(STATUS_FORBIDDEN).json({
                     status: MESSEGE_ERROR,
                     data: [],
-                    message: "Unauthorized access - admins access required." 
+                    message: "Invalid or expired token, admins access required."
                 });
             }
         } catch(error) {

@@ -145,7 +145,7 @@ describe("Test users api",  function() {
                                 }
 
                             })
-                            expect(responseUpdate.status).toBe(401);
+                            expect(responseUpdate.status).toBe(403);
                         })
                     })
 
