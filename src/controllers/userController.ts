@@ -14,6 +14,7 @@ import {
     STATUS_INTERNAL_SERVER_ERROR
 } from "../constants/data"
 require('dotenv').config()
+import {LoggerService} from "../services/LoggerService";
 
 const API_PREFIX = process.env.API_PREFIX || "api"
 const API_VERSION = process.env.API_VERSION || "v1"
@@ -22,6 +23,7 @@ import { AppDataSource } from "../config/ormconfig"
 import {RedisServerService} from "../services/RedisServerService";
 
 const redisClient = new RedisServerService().getRedisClient
+const logger = new LoggerService().createLogger()
 export const getUsers = async ( req: Request,  res: Response) => {
     try {
         const limit = Number(req.query.limit || null)
@@ -42,7 +44,7 @@ export const getUsers = async ( req: Request,  res: Response) => {
         })
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(STATUS_INTERNAL_SERVER_ERROR).json({
             status: MESSEGE_ERROR,
             data: [],
@@ -65,7 +67,7 @@ export const createUser = async ( req: Request,  res: Response) => {
             message: "New user registered successfully" 
         });
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         res.status(STATUS_INTERNAL_SERVER_ERROR).json({
             status: MESSEGE_ERROR,
             data: [],
@@ -83,6 +85,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         await redisClient.del(cacheKey)
         res.status(STATUS_NO_CONTENT).send(); // No content response
     } catch (error) {
+        logger.error(error)
         res.status(STATUS_INTERNAL_SERVER_ERROR).json({
             status: MESSEGE_ERROR,
             data: [],
@@ -114,7 +117,7 @@ export const updateUser = async (req: Request, res: Response) => {
             })
         }
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(STATUS_INTERNAL_SERVER_ERROR).json({
             status: MESSEGE_ERROR,
             data: [],
@@ -138,6 +141,7 @@ export const getUser = async (req: Request, res: Response) => {
             })
         }
     } catch (error) {
+        logger.error(error)
         return res.status(STATUS_INTERNAL_SERVER_ERROR).json({
             status: MESSEGE_ERROR,
             data: [],

@@ -13,6 +13,10 @@ import {
 config()
 import { AppDataSource } from "../config/ormconfig"
 import { TokenService } from "../services/TokenService";
+import {LoggerService} from "../services/LoggerService";
+
+const logger = new LoggerService().createLogger()
+
 export const loginUser = async ( req: Request,  res: Response) => {
     const { email, password, role } = req.body;
     const INVALID_EMAIL_PASSWORD = "Invalid email or password";
@@ -57,7 +61,7 @@ export const loginUser = async ( req: Request,  res: Response) => {
         });
 
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         res.status(STATUS_INTERNAL_SERVER_ERROR).json({
             status: MESSEGE_ERROR,
             data: [],

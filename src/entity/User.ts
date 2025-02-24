@@ -1,12 +1,13 @@
 "use strict";
 
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Index } from "typeorm"
 
 @Entity("users")
 export class User {
     @PrimaryGeneratedColumn()
     id: number
 
+    @Index()
     @Column({
         type: "varchar",
         length: 150,
