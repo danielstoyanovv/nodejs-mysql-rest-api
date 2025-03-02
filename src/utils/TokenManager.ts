@@ -1,3 +1,5 @@
+"use strict";
+
 import jwt from "jsonwebtoken";
 require('dotenv').config();
 
