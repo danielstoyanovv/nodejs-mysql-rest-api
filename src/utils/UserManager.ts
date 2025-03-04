@@ -16,11 +16,19 @@ export class UserManager {
     }
 
     /**
+     * Get user email
+     * @return {string}
+     */
+    getEmail() {
+        return this.#email
+    }
+
+    /**
      * Check Is user email exists
      * @return {boolean}
      */
     async emailExists() {
-        const existsUser = await AppDataSource.getRepository(User).findOneBy({"email": this.#email})
+        const existsUser = await AppDataSource.getRepository(User).findOneBy({"email": this.getEmail()})
         if (existsUser && existsUser.email) {
             return true
         }

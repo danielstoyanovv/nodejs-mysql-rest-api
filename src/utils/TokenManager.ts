@@ -17,11 +17,19 @@ export class TokenManager {
     }
 
     /**
+     * Get authentication token
+     * @return {string}
+     */
+    getToken() {
+        return this.#token
+    }
+
+    /**
      * Check Is authentication token expired
      * @return {boolean}
      */
     isExpired() {
-        const payloadBase64 = this.#token.split('.')[1];
+        const payloadBase64 = this.getToken().split('.')[1];
         const decodedJson = Buffer.from(payloadBase64, 'base64').toString();
         const decoded = JSON.parse(decodedJson)
         const exp = decoded.exp;
@@ -37,7 +45,7 @@ export class TokenManager {
      * @return {boolean}
      */
     includesAdmin() {
-        const tokenData = jwt.verify(this.#token, process.env.JWT_SECRET!, {})
+        const tokenData = jwt.verify(this.getToken(), process.env.JWT_SECRET!, {})
         const isAdmin = Object.values(tokenData).includes("admin");
         if (isAdmin) {
             return true

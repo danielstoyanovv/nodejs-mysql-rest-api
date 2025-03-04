@@ -18,6 +18,14 @@ export class UserRequestValidator {
     }
 
     /**
+     * Get user email
+     * @return {string}
+     */
+    getEmail() {
+        return this.#email
+    }
+
+    /**
      * Set user password
      * @param {string} password
      * @return {this}
@@ -25,6 +33,14 @@ export class UserRequestValidator {
     setPassword(password: string) {
         this.#password = password
         return this
+    }
+
+    /**
+     * Get user password
+     * @return {string}
+     */
+    getPassword() {
+        return this.#password
     }
 
     /**
@@ -38,11 +54,19 @@ export class UserRequestValidator {
     }
 
     /**
+     * Get user role
+     * @return {string}
+     */
+    getRole() {
+        return this.#role
+    }
+
+    /**
      * Check if user email is valid
      * @return {boolean}
      */
     isEmailValid() {
-        const validEmail = emailValidator.validate(this.#email)
+        const validEmail = emailValidator.validate(this.getEmail())
         if (validEmail) {
             return true
         }
@@ -54,7 +78,7 @@ export class UserRequestValidator {
      * @return {boolean}
      */
     isPasswordValid() {
-        if (this.#password.length > 20 || this.#password.length < 6) {
+        if (this.getPassword().length > 20 || this.getPassword().length < 6) {
             return false
         }
         return true
@@ -65,11 +89,10 @@ export class UserRequestValidator {
      * @return {boolean}
      */
     isRoleValid() {
-        const validRole = ROLES.includes(this.#role)
+        const validRole = ROLES.includes(this.getRole())
         if (validRole) {
             return true
         }
         return  false
     }
-
 }
