@@ -14,10 +14,10 @@ import {
 } from "../constants/data"
 require('dotenv').config()
 import {LoggerService} from "../services/LoggerService"
-import {RedisServerService} from "../services/RedisServerService";
+import {RedisService} from "../services/RedisService";
 import {UserManager} from "../utils/UserManager";
 
-const redisClient = new RedisServerService().getRedisClient
+const redisClient = new RedisService().createClient()
 const logger = new LoggerService().createLogger()
 const manager = new UserManager()
 const API_PREFIX = process.env.API_PREFIX || "api"

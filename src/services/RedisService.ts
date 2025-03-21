@@ -3,12 +3,12 @@
 const redis = require('redis');
 import {config} from "dotenv"
 config()
-export class RedisServerService {
+export class RedisService {
     /**
      * Get Redis Client
      * @return {object}
      */
-    get getRedisClient() {
+    createClient() {
         // Create Redis client
         const redisClient = redis.createClient({
             url: process.env.REDIS_URL,

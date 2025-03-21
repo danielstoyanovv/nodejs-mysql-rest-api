@@ -5,9 +5,9 @@ import {
     MESSEGE_SUCCESS,
     STATUS_OK
 } from "../constants/data"
-import {RedisServerService} from "../services/RedisServerService";
+import {RedisService} from "../services/RedisService";
 export const getUsersFromCacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const redisClient = new RedisServerService().getRedisClient
+    const redisClient = new RedisService().createClient()
     if (req.query.limit) {
         await redisClient.del("users")
     }

@@ -5,11 +5,11 @@ import {
     MESSEGE_SUCCESS,
     STATUS_OK
 } from "../constants/data"
-import {RedisServerService} from "../services/RedisServerService";
+import {RedisService} from "../services/RedisService";
 export const getUserFromCacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params
     const cacheKey = "user_" + id
-    const redisClient = new RedisServerService().getRedisClient
+    const redisClient = new RedisService().createClient()
     const cachedData = await redisClient.get(cacheKey);
     if (cachedData) {
         const user = JSON.parse(cachedData)
