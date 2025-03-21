@@ -1,6 +1,5 @@
 "use strict";
 
-import { User } from '../entity/User'
 import { Request, Response } from "express"
 import {config} from "dotenv"
 import {
@@ -11,17 +10,20 @@ import {
     STATUS_UNAUTHORIZED
 } from "../constants/data"
 config()
-import { AppDataSource } from "../config/ormconfig"
 import { TokenService } from "../services/TokenService";
 import {LoggerService} from "../services/LoggerService";
+import {UserManager} from "../utils/UserManager";
 
 const logger = new LoggerService().createLogger()
+const manager = new UserManager()
 
 export const loginUser = async ( req: Request,  res: Response) => {
     const { email, password, role } = req.body;
     const INVALID_EMAIL_PASSWORD = "Invalid email or password";
     try {
-        const user = await AppDataSource.getRepository(User).findOneBy({"email": email})
+        const user = await manager
+            .setEmail(email)
+            .getUserByEmail()
         if (!user) {
             return res.status(STATUS_UNAUTHORIZED).json({
                 status: MESSEGE_ERROR,
