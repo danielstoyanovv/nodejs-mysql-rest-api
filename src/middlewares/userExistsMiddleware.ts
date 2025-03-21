@@ -1,8 +1,6 @@
 "use strict";
 
 import {Request, Response, NextFunction } from "express";
-import { User } from "../entity/User";
-import { AppDataSource } from "../config/ormconfig"
 import {
     MESSEGE_ERROR,
     STATUS_BAD_REQUEST
