@@ -34,10 +34,7 @@ export class TokenManager {
         const decoded = JSON.parse(decodedJson)
         const exp = decoded.exp;
         const expired = (Date.now() >= exp * 1000)
-        if (expired) {
-            return true
-        }
-        return false
+        return expired
     }
 
     /**
@@ -46,10 +43,6 @@ export class TokenManager {
      */
     includesAdmin() {
         const tokenData = jwt.verify(this.getToken(), process.env.JWT_SECRET!, {})
-        const isAdmin = Object.values(tokenData).includes("admin");
-        if (isAdmin) {
-            return true
-        }
-        return false
+        return Object.values(tokenData).includes("admin");
     }
 }
