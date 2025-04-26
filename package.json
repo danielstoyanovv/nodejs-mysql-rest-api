@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest",
     "start": "node ./build/server.js",
-    "dev": "ts-node --files src/server.ts"
+    "dev": "ts-node-dev src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -20,12 +20,15 @@
     "email-validator": "^2.0.4",
     "esm": "^3.2.25",
     "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
+    "express-validator": "^7.2.1",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
     "mysql": "^2.18.1",
     "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",
+    "ts-node-dev": "^2.0.0",
     "typeorm": "^0.3.20",
     "winston": "^3.17.0"
   },

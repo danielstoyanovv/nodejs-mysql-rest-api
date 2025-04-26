@@ -2,7 +2,7 @@
 
 import { User } from "../entity/User";
 import {AppDataSource} from "../config/ormconfig";
-export class UserManager {
+export class UserService {
     #email: string
     #role: string
     #password: string

@@ -6,17 +6,21 @@ import {
     STATUS_OK
 } from "../constants/data"
 import {RedisService} from "../services/RedisService";
-export const getUserFromCacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params
-    const cacheKey = "user_" + id
+export const getCachedUsersMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const redisClient = new RedisService().createClient()
-    const cachedData = await redisClient.get(cacheKey);
+    if (req.query.limit) {
+        await redisClient.del("users")
+    }
+    const cachedData = await redisClient.get("users");
     if (cachedData) {
-        const user = JSON.parse(cachedData)
+        const users = JSON.parse(cachedData)
         console.log('Cache hit');
         return res.status(STATUS_OK).json({
             status: MESSEGE_SUCCESS,
-            data: user,
+            data: {
+                users,
+                "total" : users.length
+            },
             message: ""
         })
     }
