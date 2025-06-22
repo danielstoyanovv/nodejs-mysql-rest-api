@@ -3,6 +3,9 @@
 import { DataSource } from "typeorm";
 const {config} = require("dotenv")
 config()
+import {LoggerService} from "../services/LoggerService";
+
+const logger = new LoggerService().createLogger()
 
 const DB_NAME = process.env.NODE_ENV === 'test' ? process.env.DB_NAME +  "_test" : process.env.DB_NAME
 export const AppDataSource = new DataSource({
@@ -18,3 +21,4 @@ export const AppDataSource = new DataSource({
     migrations: ["src/migration/**/*.ts"],
     subscribers: ["src/subscriber/**/*.ts"],
 });
+logger.info(`Database ${DB_NAME} establishing connection ` + new Date())

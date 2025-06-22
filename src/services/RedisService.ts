@@ -1,9 +1,11 @@
 "use strict";
 
-const redis = require('redis');
+import {RedisServiceInterface} from "./RedisServiceInterface";
 import {config} from "dotenv"
+
+const redis = require('redis');
 config()
-export class RedisService {
+export class RedisService implements RedisServiceInterface {
     /**
      * Get Redis Client
      * @return {object}
