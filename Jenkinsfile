@@ -14,6 +14,8 @@ pipeline {
                     node --version
                     npm --version
                     ls -la
+                    npm i
+                    ls -la
                 '''
             }
         }
