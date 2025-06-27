@@ -1,7 +1,7 @@
 describe("Test users api",  function() {
     const API_URL = "http://localhost:4000/api/v1/users";
     const API_LOGIN = "http://localhost:4000/api/v1/login";
-    test("Create a new user user", async function() {
+    test("Create a new user", async function() {
         const notValidUser = {
             email: "2",
             password: "1",
