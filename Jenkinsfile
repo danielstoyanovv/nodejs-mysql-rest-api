@@ -13,6 +13,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                         sh '''
                             aws --version
+                            aws s3 cp package.json s3://my_s3_bucket/package.json
                         '''
                 }
             }
