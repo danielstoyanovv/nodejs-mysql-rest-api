@@ -22,6 +22,21 @@ pipeline {
                 '''
             }
         }
+        // Test stage
+                stage("Test") {
+                    agent {
+                        docker {
+                            image "node:alpine"
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                          sh '''
+                            npm test
+                          '''
+                    }
+                }
+        // AWS stage
         stage("AWS") {
                     agent {
                         docker {
@@ -41,19 +56,5 @@ pipeline {
                         }
                     }
                 }
-        // Test stage
-        stage("Test") {
-            agent {
-                docker {
-                    image "node:alpine"
-                    reuseNode true
-                }
-            }
-            steps {
-                  sh '''
-                    npm test
-                  '''
-            }
-        }
     }
 }
