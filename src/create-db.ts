@@ -4,6 +4,7 @@ const mysql = require('mysql2');
 const {config} = require("dotenv")
 config()
 import {LoggerService} from "./services/LoggerService";
+import {DatabaseConnectionError} from "./errors/database-connection-error";
 
 const logger = new LoggerService().createLogger()
 
@@ -18,7 +19,7 @@ const db = mysql.createConnection({
 db.connect((err) => {
     if (err) {
         logger.error('Error connecting to MySQL:', err.message);
-        return;
+        throw new DatabaseConnectionError(err.message);
     }
     logger.info('Connected to MySQL database');
     db.query('CREATE DATABASE ' + DB_NAME)
