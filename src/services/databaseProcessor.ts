@@ -2,4 +2,5 @@
 
 export abstract class DatabaseProcessor {
     abstract createDatabase ()
+    abstract getConnectionDriver()
 }
